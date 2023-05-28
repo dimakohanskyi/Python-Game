@@ -1,0 +1,170 @@
+
+from IPython.display import clear_output
+
+def display_board(board):
+    print('Вас вітає ігра для далбайобів хрестіки або ноліки =)')
+    clear_output()
+    print('  |   |')
+    print(board[7]+' | '+board[8]+' | '+board[9])
+    print('  |   |')
+    print('----------')
+    print('  |   |')
+    print(board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('  |   |')
+    print('----------')
+    print('  |   |')
+    print(board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('  |   |')
+
+
+test_board = ['#', 'X', '0', 'X', '0', 'X', '0', 'X', '0', 'X']
+display_board(test_board)
+
+
+
+def player_input():
+    '''
+    OUTPUT = (Player 1 marker, Player 2 marker)
+    '''
+    marker = ''
+
+    while not (marker == 'X' or marker == '0'):
+        marker = input('Чіпуха на Playear 1 - choose(вибирай) |X| or |0|: ').upper()
+
+    if marker == 'X':
+
+        return ('X', '0')
+    else:
+        return ('0', 'X')
+
+
+
+def place_marker(board, marker, position):
+    board[position] = marker
+
+
+
+def win_check(board, mark, position):
+
+    return (board[1] == board[2] == board[3] == mark or
+            board[4] == board[5] == board[6] == mark or
+            board[7] == board[8] == board[9] == mark or
+            board[1] == board[4] == board[7] == mark or
+            board[2] == board[5] == board[8] == mark or
+            board[3] == board[6] == board[9] == mark or
+            board[1] == board[5] == board[9] == mark or
+            board[7] == board[5] == board[3] == mark)
+
+
+
+import random
+
+def choose_first():
+
+    flip = random.randint(0,1)
+
+    if flip == 0:
+        return 'Player1'
+    else:
+        return 'Player2'
+
+
+
+def space_check(board,position):
+
+    return board[position] == ' '
+
+
+
+def full_board_check(board):
+
+    for i in range(1, 10):
+
+        if space_check(board, i):
+            return False
+
+    return True
+
+
+
+
+def player_choice(board):
+
+    position = 0
+
+    while position not in [1, 2, 3, 4, 5, 6, 7, 8, 9] or not space_check(board, position):
+        position = int(input('Укажите поле: (1-9)  '))
+
+    return position
+
+
+
+def replay():
+    choice = input("Do you want to play again? Yes or no - ")
+
+    return choice == 'Yes'
+
+
+
+while True:
+
+
+    the_board = [' ']*10
+    player1_marker, player2_marker = player_input()
+
+    turn = choose_first()
+    print(turn + ' Go first')
+
+    play_game = input('Are you redy to play?  ')
+
+    if play_game == 'Yes':
+        game_on = True
+    else:
+        game_on = False
+
+
+    while game_on:
+
+        if turn == 'Player1':
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player1_marker, position)
+
+
+            if win_check(the_board, player1_marker, position):
+                display_board(the_board)
+                print('Player1 Win!')
+                game_on = False
+
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('Нічия!')
+                    game_on = False
+                else:
+                    turn = 'Player2'
+
+
+
+        else:
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player2_marker, position)
+
+
+            if win_check(the_board, player2_marker, position):
+                display_board(the_board)
+                print('Player2 Win!')
+                game_on = False
+
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('Нічия!')
+                    game_on = False
+                else:
+                    turn = 'Player1'
+
+
+    if not replay():
+        break
